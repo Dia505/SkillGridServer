@@ -1,4 +1,5 @@
 const Review = require("../model/Review")
+const Education = require("../model/Education");
 
 const findAll = async (req,res) => {
     try {
@@ -31,6 +32,28 @@ const findById = async (req, res) => {
     }
 }
 
+const findByClientId = async (req, res) => {
+    try {
+        const {client_id} = req.params;
+        const review = await Review.find({client_id}).populate("client_id");
+        res.status(200).json(review);
+    }
+    catch (e) {
+        res.json(e)
+    }
+}
+
+const findByFreelancerId = async (req, res) => {
+    try {
+        const {freelancer_id} = req.params;
+        const review = await Review.find({freelancer_id}).populate("freelancer_id");
+        res.status(200).json(review);
+    }
+    catch (e) {
+        res.json(e)
+    }
+}
+
 const deleteById = async (req, res) => {
     try {
         const review = await Review.findByIdAndDelete(req.params.id);
@@ -55,6 +78,8 @@ module.exports = {
     findAll,
     save,
     findById,
+    findByClientId,
+    findByFreelancerId,
     deleteById,
-    update
+    update,
 }
