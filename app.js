@@ -5,6 +5,7 @@ const ClientRouter = require("./route/client_route")
 const FreelancerRouter = require("./route/freelancer_route")
 const ReviewRouter = require("./route/review_route")
 const EmploymentRouter = require("./route/employment_route")
+const EducationRouter = require("./route/education_route")
 
 connectDb();
 
@@ -14,6 +15,7 @@ app.use("/api/client", ClientRouter);
 app.use("/api/freelancer", FreelancerRouter);
 app.use("/api/review", ReviewRouter);
 app.use("/api/employment", EmploymentRouter);
+app.use("/api/education", EducationRouter);
 
 const port = 3000;
 app.listen(port, () => {
