@@ -1,5 +1,4 @@
 const Review = require("../model/Review")
-const Education = require("../model/Education");
 
 const findAll = async (req,res) => {
     try {
