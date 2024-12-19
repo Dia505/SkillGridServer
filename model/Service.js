@@ -15,6 +15,6 @@ serviceSchema.pre("save", function(next) {
     next();
 });
 
-const Service = mongoose.model("Service", serviceSchema);
+const Service = mongoose.model("service", serviceSchema);
 
 module.exports = Service;
