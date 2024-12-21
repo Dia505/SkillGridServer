@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const reviewSchema = new mongoose.Schema({
+const freelancerServiceSchema = new mongoose.Schema({
     hourly_rate: {
         type: Number,
         required: true
@@ -19,6 +19,6 @@ const reviewSchema = new mongoose.Schema({
     },
 })
 
-const Freelancer_Service = mongoose.model("freelancer_service", reviewSchema)
+const Freelancer_Service = mongoose.model("freelancer_service", freelancerServiceSchema)
 
 module.exports = Freelancer_Service;

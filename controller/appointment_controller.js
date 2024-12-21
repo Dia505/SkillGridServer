@@ -1,5 +1,4 @@
 const Appointment = require("../model/Appointment")
-const Education = require("../model/Education");
 
 const findAll = async (req,res) => {
     try {

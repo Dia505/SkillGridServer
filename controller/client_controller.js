@@ -1,5 +1,4 @@
 const Client = require("../model/Client")
-const Freelancer = require("../model/Freelancer");
 
 const findAll = async (req,res) => {
     try {

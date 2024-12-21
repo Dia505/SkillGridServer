@@ -10,6 +10,7 @@ const ServiceRouter = require("./route/service_route")
 const FreelancerServiceRouter = require("./route/freelancer_service_route")
 const PortfolioRouter = require("./route/portfolio_route")
 const AppointmentRouter = require("./route/appointment_route")
+const BillingAddressRouter = require("./route/billing_address_route")
 
 connectDb();
 
@@ -21,9 +22,10 @@ app.use("/api/review", ReviewRouter);
 app.use("/api/employment", EmploymentRouter);
 app.use("/api/education", EducationRouter);
 app.use("/api/service", ServiceRouter);
-app.use("/api/freelancer_service", FreelancerServiceRouter);
+app.use("/api/freelancer-service", FreelancerServiceRouter);
 app.use("/api/portfolio", PortfolioRouter);
 app.use("/api/appointment", AppointmentRouter)
+app.use("/api/billing-address", BillingAddressRouter)
 
 const port = 3000;
 app.listen(port, () => {
