@@ -34,7 +34,7 @@ const findById = async (req, res) => {
 const findByFreelancerId = async (req, res) => {
     try {
         const {freelancer_id} = req.params;
-        const freelancer_service = await Freelancer_Service.find({freelancer_id}).populate("freelancer_id");
+        const freelancer_service = await Freelancer_Service.find({freelancer_id}).populate("freelancer_id").populate("service_id");
         res.status(200).json(freelancer_service);
     }
     catch (e) {

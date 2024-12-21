@@ -14,8 +14,8 @@ const findAll = async (req,res) => {
 const save = async (req, res) => {
     try {
         const {first_name, last_name, date_of_birth, mobile_no, email, password, address, city, bio, job_category, profession, skills, years_of_experience, available} = req.body
-        const profilePicture = req.files?.profile_picture?.[0]?.filename || null;
-        const backgroundPicture = req.files?.background_picture?.[0]?.filename || null;
+        const profilePicture = req.files?.profile_picture?.[0]?.filename || "default_profile.png";
+        const backgroundPicture = req.files?.background_picture?.[0]?.filename || "default_bg_img.jpg";
 
         const freelancer = new Freelancer({
             first_name,

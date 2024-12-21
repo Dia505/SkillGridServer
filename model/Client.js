@@ -27,6 +27,7 @@ const clientSchema = new mongoose.Schema({
     },
     profile_picture: {
         type: String,
+        default: "default_profile.png",
         required: false
     }
 })

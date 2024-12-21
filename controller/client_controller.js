@@ -20,7 +20,7 @@ const save = async (req, res) => {
             email,
             password,
             city,
-            profile_picture: req.file.originalname
+            profile_picture: req.file?.originalname || "default_profile.png",
         });
         await client.save();
         res.status(201).json(client)

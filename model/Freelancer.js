@@ -35,31 +35,33 @@ const freelancerSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
-        required: true
+        required: false
     },
     job_category: {
         type: String,
-        required: true
+        required: false
     },
     profession: {
         type: String,
-        required: true
+        required: false
     },
     skills: {
         type: String,
-        required: true
+        required: false
     },
     years_of_experience: {
         type: Number,
-        required: true,
+        required: false,
         min: 0
     },
     profile_picture: {
         type: String,
+        default: "default_profile.png",
         required: false
     },
     background_picture: {
         type: String,
+        default: "default_bg_img.jpg",
         required: false
     },
     available: {
