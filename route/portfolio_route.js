@@ -18,6 +18,6 @@ router.post("/", upload.single("file_path"), save);
 router.get("/:id", findById);
 router.get("/freelancer_service/:freelancer_service_id", findByFreelancerServiceId);
 router.delete("/:id", deleteById);
-router.put("/:id", update);
+router.put("/:id", upload.single("file_path"), update)
 
 module.exports = router;

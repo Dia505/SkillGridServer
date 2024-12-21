@@ -59,13 +59,29 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const portfolio = await Portfolio.findByIdAndUpdate(req.params.id, req.body, {new: true});
-        res.status(201).json(portfolio);
+        // Prepare the update data object
+        const updatedData = { ...req.body };
+
+        // Check if a new file has been uploaded and update the file_path
+        if (req.file) {
+            updatedData.file_path = req.file.filename;
+        }
+
+        // Update the portfolio with the new data
+        const portfolio = await Portfolio.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+
+        // If no portfolio found, return a 404 error
+        if (!portfolio) {
+            return res.status(404).json({ message: "Portfolio not found" });
+        }
+
+        // Return the updated portfolio
+        res.status(200).json(portfolio);
+    } catch (e) {
+        res.status(500).json({ message: e.message });
     }
-    catch (e) {
-        res.json(e)
-    }
-}
+};
+
 
 
 

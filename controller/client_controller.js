@@ -1,4 +1,5 @@
 const Client = require("../model/Client")
+const Freelancer = require("../model/Freelancer");
 
 const findAll = async (req,res) => {
     try {
@@ -60,10 +61,29 @@ const update = async (req, res) => {
     }
 }
 
+const updateProfilePicture = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const client = await Client.findByIdAndUpdate(
+        req.params.id,
+        { profile_picture: req.file.filename },
+        { new: true }
+    );
+
+    if (!client) {
+        return res.status(404).json({ message: "Client not found" });
+    }
+
+    res.status(200).json(client);
+};
+
 module.exports = {
     findAll,
     save,
     findById,
     deleteById,
-    update
+    update,
+    updateProfilePicture
 }

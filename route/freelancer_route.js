@@ -1,5 +1,5 @@
 const express = require("express")
-const {findAll, save, findById, deleteById, update} = require("../controller/freelancer_controller");
+const {findAll, save, findById, deleteById, update, updateProfilePicture, updateBgPicture} = require("../controller/freelancer_controller");
 const router = express.Router();
 const multer = require("multer")
 
@@ -24,5 +24,7 @@ router.post("/", uploadFields, save);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update)
+router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);
+router.put("/:id/background-picture", upload.single("background_picture"), updateBgPicture)
 
 module.exports = router;

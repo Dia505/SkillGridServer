@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const {findAll, save, findById, deleteById, update} = require("../controller/client_controller");
+const {findAll, save, findById, deleteById, update, updateProfilePicture} = require("../controller/client_controller");
 
 const multer = require("multer")
 const storage = multer.diskStorage({
@@ -14,9 +14,10 @@ const storage = multer.diskStorage({
 const upload = multer({storage})
 
 router.get("/", findAll);
-router.post("/", upload.single("file"), save);
+router.post("/", upload.single("profile_picture"), save);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
-router.put("/:id", update)
+router.put("/:id", update);
+router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);
 
 module.exports = router;
