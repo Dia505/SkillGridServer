@@ -23,7 +23,7 @@ const save = async (req, res) => {
 
 const findById = async (req, res) => {
     try {
-        const employment = await Employment.findById(req.params.id);
+        const employment = await Employment.findById(req.params.id).populate("freelancer_id");
         res.status(200).json(employment);
     }
     catch (e) {

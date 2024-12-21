@@ -23,7 +23,7 @@ const save = async (req, res) => {
 
 const findById = async (req, res) => {
     try {
-        const education = await Education.findById(req.params.id);
+        const education = await Education.findById(req.params.id).populate("freelancer_id");
         res.status(200).json(education);
     }
     catch (e) {

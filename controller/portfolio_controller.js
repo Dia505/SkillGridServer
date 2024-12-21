@@ -2,7 +2,14 @@ const Portfolio = require("../model/Portfolio")
 
 const findAll = async (req,res) => {
     try {
-        const portfolio = await Portfolio.find().populate("freelancer_service_id")
+        const portfolio = await Portfolio.find()
+            .populate({
+                path: "freelancer_service_id",
+                populate: [
+                    { path: "freelancer_id" }, // Populates the freelancer details
+                    { path: "service_id" }     // Populates the service details
+                ]
+            });
         res.status(200).json(portfolio);
     }
     catch (e) {
@@ -28,7 +35,14 @@ const save = async (req, res) => {
 
 const findById = async (req, res) => {
     try {
-        const portfolio = await Portfolio.findById(req.params.id);
+        const portfolio = await Portfolio.findById(req.params.id)
+            .populate({
+                path: "freelancer_service_id",
+                populate: [
+                    { path: "freelancer_id" },
+                    { path: "service_id" }
+                ]
+            });
         res.status(200).json(portfolio);
     }
     catch (e) {
@@ -39,7 +53,14 @@ const findById = async (req, res) => {
 const findByFreelancerServiceId = async (req, res) => {
     try {
         const {freelancer_service_id} = req.params;
-        const portfolio = await Portfolio.find({freelancer_service_id}).populate("freelancer_service_id");
+        const portfolio = await Portfolio.find({freelancer_service_id})
+            .populate({
+                path: "freelancer_service_id",
+                populate: [
+                    { path: "freelancer_id" },
+                    { path: "service_id" }
+                ]
+            });
         res.status(200).json(portfolio);
     }
     catch (e) {
@@ -81,9 +102,6 @@ const update = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 };
-
-
-
 
 module.exports = {
     findAll,
