@@ -28,7 +28,6 @@ const save = async (req, res) => {
     }
 }
 
-
 const findById = async (req, res) => {
     try {
         const appointment = await Appointment.findById(req.params.id)
