@@ -1,7 +1,8 @@
 const express = require("express")
 const {findAll, save, findById, deleteById, update, updateProfilePicture, updateBgPicture} = require("../controller/freelancer_controller");
 const router = express.Router();
-const multer = require("multer")
+const multer = require("multer");
+const { freelancerRegistrationValidation } = require('../validation/freelancer_validation');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,7 +21,7 @@ const uploadFields = upload.fields([
     { name: "background_picture", maxCount: 1 }
 ]);
 router.get("/", findAll);
-router.post("/", uploadFields, save);
+router.post("/", freelancerRegistrationValidation, uploadFields, save);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update)

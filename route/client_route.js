@@ -1,8 +1,9 @@
 const express = require("express")
 const router = express.Router();
 const {findAll, save, findById, deleteById, update, updateProfilePicture} = require("../controller/client_controller");
+const clientValidation = require("../validation/client_validation")
 
-const multer = require("multer")
+const multer = require("multer");
 const storage = multer.diskStorage({
     destination: function(req, res, cb) {
         cb(null, "client_images")
@@ -14,7 +15,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage})
 
 router.get("/", findAll);
-router.post("/", upload.single("profile_picture"), save);
+router.post("/", clientValidation, upload.single("profile_picture"), save);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update);
