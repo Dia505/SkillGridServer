@@ -7,8 +7,7 @@ const portfolioSchema = new mongoose.Schema({
     },
     upload_date: {
         type: Date,
-        default: Date.now,
-        required: true
+        default: Date.now
     },
     caption: {
         type: String,
