@@ -7,7 +7,7 @@ const billingAddressSchema = new mongoose.Schema({
     },
     city: {
         type: String,
-        required: false
+        required: true
     },
 });
 const Billing_Address = mongoose.model("billing_address", billingAddressSchema);
