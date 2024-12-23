@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema({
     },
     review_date: {
         type: Date,
-        required: true
+        default: Date.now
     },
     client_id: {
         type: mongoose.Schema.Types.ObjectId,
