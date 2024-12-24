@@ -12,6 +12,7 @@ const PortfolioRouter = require("./route/portfolio_route")
 const AppointmentRouter = require("./route/appointment_route")
 const BillingAddressRouter = require("./route/billing_address_route")
 const PaymentRouter = require("./route/payment_route")
+const AuthRouter = require("./route/auth_route")
 
 connectDb();
 
@@ -28,6 +29,8 @@ app.use("/api/portfolio", PortfolioRouter);
 app.use("/api/appointment", AppointmentRouter);
 app.use("/api/billing-address", BillingAddressRouter);
 app.use("/api/payment", PaymentRouter);
+
+app.use("/api/auth", AuthRouter);
 
 const port = 3000;
 app.listen(port, () => {

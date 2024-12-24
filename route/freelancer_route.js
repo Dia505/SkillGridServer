@@ -3,6 +3,7 @@ const {findAll, save, findById, deleteById, update, updateProfilePicture, update
 const router = express.Router();
 const multer = require("multer");
 const { freelancerRegistrationValidation } = require('../validation/freelancer_validation');
+const {authenticateToken} = require("../security/auth") 
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,9 +21,9 @@ const uploadFields = upload.fields([
     { name: "profile_picture", maxCount: 1 },
     { name: "background_picture", maxCount: 1 }
 ]);
-router.get("/", findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
-router.get("/:id", findById);
+router.get("/:id", authenticateToken, findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update)
 router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);

@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router();
 const {findAll, save, findById, deleteById, update, updateProfilePicture} = require("../controller/client_controller");
 const clientValidation = require("../validation/client_validation")
+const {authenticateToken} = require("../security/auth") 
 
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -14,9 +15,9 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage})
 
-router.get("/", findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", clientValidation, upload.single("profile_picture"), save);
-router.get("/:id", findById);
+router.get("/:id", authenticateToken, findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update);
 router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);

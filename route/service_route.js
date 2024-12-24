@@ -1,11 +1,12 @@
 const express = require("express")
 const router = express.Router();
 const {findAll, save, findById, deleteById, update} = require("../controller/service_controller");
+const {authenticateToken} = require("../security/auth");
 
-router.get("/", findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", save);
-router.get("/:id", findById);
-router.delete("/:id", deleteById);
-router.put("/:id", update)
+router.get("/:id", authenticateToken, findById);
+router.delete("/:id", authenticateToken, deleteById);
+router.put("/:id", authenticateToken, update)
 
 module.exports = router;
