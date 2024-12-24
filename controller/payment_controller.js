@@ -32,23 +32,23 @@ const calculateAmount = async (appointmentId) => {
         const { project_duration } = appointment;
         const { hourly_rate } = appointment.freelancer_service_id;
 
-        // Convert project duration value to hours
+        // Convert project duration value to working hours (assuming 8 hours)
         let durationInHours;
         switch (project_duration.unit) {
             case 'hour':
                 durationInHours = project_duration.value;
                 break;
             case 'day':
-                durationInHours = project_duration.value * 24;
+                durationInHours = project_duration.value * 8;
                 break;
             case 'week':
-                durationInHours = project_duration.value * 7 * 24;
+                durationInHours = project_duration.value * 6 * 8;
                 break;
             case 'month':
-                durationInHours = project_duration.value * 30 * 24;
+                durationInHours = project_duration.value * 26 * 8;
                 break;
             case 'year':
-                durationInHours = project_duration.value * 365 * 24;
+                durationInHours = project_duration.value * 313 * 8;
                 break;
             default:
                 throw new Error("Invalid project duration unit");

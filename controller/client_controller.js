@@ -1,6 +1,7 @@
-const Client = require("../model/Client")
+const Client = require("../model/Client");
+const bcrypt = require("bcryptjs");
 
-const findAll = async (req,res) => {
+const findAll = async (req, res) => {
     try {
         const client = await Client.find();
         res.status(200).json(client);
@@ -12,13 +13,14 @@ const findAll = async (req,res) => {
 
 const save = async (req, res) => {
     try {
-        const {first_name, last_name, mobile_no, email, password, city} = req.body
+        const { first_name, last_name, mobile_no, email, password, city } = req.body
+        const hashedPassword = await bcrypt.hash(password, 10);
         const client = new Client({
             first_name,
             last_name,
             mobile_no,
             email,
-            password,
+            password: hashedPassword,
             city,
             profile_picture: req.file?.originalname || "default_profile.png",
         });
@@ -52,7 +54,7 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const client = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const client = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(201).json(client);
     }
     catch (e) {
