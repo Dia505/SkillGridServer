@@ -1,5 +1,6 @@
 const Client = require("../model/Client");
 const bcrypt = require("bcryptjs");
+const Role = require("../model/Role");
 
 const findAll = async (req, res) => {
     try {
@@ -13,8 +14,16 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
     try {
-        const { first_name, last_name, mobile_no, email, password, city } = req.body
+        const { first_name, last_name, mobile_no, email, password, city } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Check if the client role exists and assign it
+        const clientRole = await Role.findOne({ role_name: "client" });
+
+        if (!clientRole) {
+            return res.status(400).json({ message: "Client role not found" });
+        }
+
         const client = new Client({
             first_name,
             last_name,
@@ -23,14 +32,17 @@ const save = async (req, res) => {
             password: hashedPassword,
             city,
             profile_picture: req.file?.originalname || "default_profile.png",
+            role_id: clientRole._id // Explicitly set the role here
         });
+
         await client.save();
-        res.status(201).json(client)
+        res.status(201).json(client);
     }
     catch (e) {
-        res.json(e)
+        res.json(e);
     }
-}
+};
+
 
 const findById = async (req, res) => {
     try {

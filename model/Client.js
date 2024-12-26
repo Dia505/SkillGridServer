@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const Role = require("../model/Role")
 
 const clientSchema = new mongoose.Schema({
     first_name: {
@@ -29,6 +30,11 @@ const clientSchema = new mongoose.Schema({
         type: String,
         default: "default_profile.png",
         required: false
+    },
+    role_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
+        required: true
     }
 })
 

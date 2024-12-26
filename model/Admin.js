@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const credSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true
@@ -10,11 +10,12 @@ const credSchema = new mongoose.Schema({
         required: true
     },
     role: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
         required: true
     }
 });
 
-const Credential = mongoose.model(" credential", credSchema);
+const Admin = mongoose.model("admin", adminSchema);
 
-module.exports = Credential;
+module.exports = Admin;
