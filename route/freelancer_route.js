@@ -1,9 +1,10 @@
 const express = require("express")
-const {findAll, save, findById, deleteById, update, updateProfilePicture, updateBgPicture} = require("../controller/freelancer_controller");
+const { findAll, save, findById, deleteById, update, updateProfilePicture, updateBgPicture } = require("../controller/freelancer_controller");
 const router = express.Router();
 const multer = require("multer");
 const { freelancerRegistrationValidation } = require('../validation/freelancer_validation');
-const {authenticateToken} = require("../security/auth") 
+const { authenticateToken } = require("../security/auth");
+const { authorizeRole } = require("../security/auth");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -24,9 +25,9 @@ const uploadFields = upload.fields([
 router.get("/", authenticateToken, findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
 router.get("/:id", authenticateToken, findById);
-router.delete("/:id", deleteById);
-router.put("/:id", update)
-router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);
-router.put("/:id/background-picture", upload.single("background_picture"), updateBgPicture)
+router.delete("/:id", authenticateToken, authorizeRole("freelancer"), deleteById);
+router.put("/:id", authenticateToken, authorizeRole("freelancer"), update)
+router.put("/:id/profile-picture", authenticateToken, authorizeRole("freelancer"), upload.single("profile_picture"), updateProfilePicture);
+router.put("/:id/background-picture", authenticateToken, authorizeRole("freelancer"), upload.single("background_picture"), updateBgPicture)
 
 module.exports = router;
