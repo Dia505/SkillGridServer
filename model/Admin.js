@@ -9,7 +9,7 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    role: {
+    role_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role",
         required: true

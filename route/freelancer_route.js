@@ -22,9 +22,9 @@ const uploadFields = upload.fields([
     { name: "profile_picture", maxCount: 1 },
     { name: "background_picture", maxCount: 1 }
 ]);
-router.get("/", authenticateToken, findAll);
+router.get("/", authenticateToken, authorizeRole("admin"), findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
-router.get("/:id", authenticateToken, findById);
+router.get("/:id", authenticateToken, authorizeRole("admin"), findById);
 router.delete("/:id", authenticateToken, authorizeRole("freelancer"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("freelancer"), update)
 router.put("/:id/profile-picture", authenticateToken, authorizeRole("freelancer"), upload.single("profile_picture"), updateProfilePicture);
