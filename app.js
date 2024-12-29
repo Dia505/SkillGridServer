@@ -1,5 +1,6 @@
 const express = require("express")
 const connectDb = require("./config/db")
+const cors = require("cors");
 const app = express();
 const ClientRouter = require("./route/client_route")
 const FreelancerRouter = require("./route/freelancer_route")
@@ -15,6 +16,13 @@ const PaymentRouter = require("./route/payment_route")
 const AuthRouter = require("./route/auth_route")
 
 connectDb();
+
+//CORS middleware applied before route defining
+app.use(cors({
+    origin: "http://localhost:5173", 
+    methods: "GET,POST,PUT,DELETE", // Allowed HTTP methods
+    credentials: true,              // Allow cookies
+  }));
 
 app.use(express.json());
 
