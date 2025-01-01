@@ -32,8 +32,11 @@ const login = async (req, res) => {
         cred = await Freelancer.findOne({ email });
     }
 
-    if (!cred || !(await bcrypt.compare(password, cred.password))) {
-        return res.status(403).send("Invalid email or password");
+    if(!cred) {
+        return res.status(403).send("Incorrect email address");
+    }
+    if (!(await bcrypt.compare(password, cred.password))) {
+        return res.status(403).send("Incorrect password");
     }
 
     const roleData = await Role.findById(cred.role_id)

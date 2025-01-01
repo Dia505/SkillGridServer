@@ -19,10 +19,10 @@ connectDb();
 
 //CORS middleware applied before route defining
 app.use(cors({
-    origin: "http://localhost:5173", 
-    methods: "GET,POST,PUT,DELETE", // Allowed HTTP methods
-    credentials: true,              // Allow cookies
-  }));
+  origin: "http://localhost:5173",
+  methods: "GET,POST,PUT,DELETE", // Allowed HTTP methods
+  credentials: true,              // Allow cookies
+}));
 
 app.use(express.json());
 
@@ -42,5 +42,5 @@ app.use("/api/auth", AuthRouter);
 
 const port = 3000;
 app.listen(port, () => {
-    console.log(`server running at http://localhost:${port}`)
+  console.log(`server running at http://localhost:${port}`)
 })
