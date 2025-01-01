@@ -32,7 +32,7 @@ const login = async (req, res) => {
         cred = await Freelancer.findOne({ email });
     }
 
-    if(!cred) {
+    if (!cred) {
         return res.status(403).send("Incorrect email address");
     }
     if (!(await bcrypt.compare(password, cred.password))) {
@@ -42,7 +42,11 @@ const login = async (req, res) => {
     const roleData = await Role.findById(cred.role_id)
 
     const token = jwt.sign({ email: cred.email, role: roleData.role_name, userId: cred._id }, SECRET_KEY, { expiresIn: "1 hour" });
-    res.json({ token });
+    res.json({
+        token,
+        role: roleData.role_name,
+        userId: cred._id,
+    });
 };
 
 module.exports = { login, register };
