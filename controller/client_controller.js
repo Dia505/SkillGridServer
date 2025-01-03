@@ -1,6 +1,8 @@
 const Client = require("../model/Client");
 const bcrypt = require("bcryptjs");
 const Role = require("../model/Role");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "ead678ab98e529472a8ba3bb8940653229510e01a9078ef9b15320d385f9df02";
 
 const findAll = async (req, res) => {
     try {
@@ -17,13 +19,13 @@ const save = async (req, res) => {
         const { first_name, last_name, mobile_no, email, password, city } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Check if the client role exists and assign it
+        // Find the client role
         const clientRole = await Role.findOne({ role_name: "client" });
-
         if (!clientRole) {
             return res.status(400).json({ message: "Client role not found" });
         }
 
+        // Create the client
         const client = new Client({
             first_name,
             last_name,
@@ -32,14 +34,28 @@ const save = async (req, res) => {
             password: hashedPassword,
             city,
             profile_picture: req.file?.originalname || "default_profile.png",
-            role_id: clientRole._id // Explicitly set the role here
+            role_id: clientRole._id, // Explicitly set the role ID
         });
 
         await client.save();
-        res.status(201).json(client);
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { role: clientRole.role_name, userId: client._id },
+            SECRET_KEY,
+            { expiresIn: "1h" }
+        );
+
+        // Respond with the client data and token
+        res.status(201).json({
+            message: "Client created successfully",
+            client,
+            token,
+        });
     }
     catch (e) {
-        res.json(e);
+        console.error(e); // Log the error for debugging
+        res.status(500).json({ message: "An error occurred while creating the client" });
     }
 };
 

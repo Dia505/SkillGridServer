@@ -46,7 +46,18 @@ const save = async (req, res) => {
             role_id: freelancerRole._id
         });
         await freelancer.save();
-        res.status(201).json(freelancer)
+
+        const token = jwt.sign(
+            { role: freelancerRole.role_name, userId: freelancer._id },
+            SECRET_KEY,
+            { expiresIn: "1h" }
+        );
+
+        res.status(201).json({
+            message: "Freelancer created successfully",
+            freelancer,
+            token,
+        });
     }
     catch (e) {
         res.json(e)
