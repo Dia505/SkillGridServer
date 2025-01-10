@@ -1,6 +1,8 @@
 const Freelancer = require("../model/Freelancer");
 const bcrypt = require("bcryptjs");
 const Role = require("../model/Role");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "ead678ab98e529472a8ba3bb8940653229510e01a9078ef9b15320d385f9df02";
 
 const findAll = async (req, res) => {
     try {
@@ -53,16 +55,19 @@ const save = async (req, res) => {
             { expiresIn: "1h" }
         );
 
+        console.log(token); // Log token for debugging
+
         res.status(201).json({
             message: "Freelancer created successfully",
             freelancer,
             token,
         });
-    }
-    catch (e) {
-        res.json(e)
+    } catch (e) {
+        console.error(e); // Log error for debugging
+        res.status(500).json({ message: "Internal Server Error", error: e.message });
     }
 }
+
 
 const findById = async (req, res) => {
     try {
