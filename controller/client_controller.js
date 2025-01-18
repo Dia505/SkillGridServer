@@ -63,12 +63,24 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const client = await Client.findById(req.params.id);
-        res.status(200).json(client);
+        
+        if (!client) {
+            return res.status(404).json({ message: "Client not found" });
+        }
+
+        const BASE_URL = "http://localhost:3000";
+
+        // Ensure profile_picture contains a full URL
+        const profilePicture = client.profile_picture
+            ? `${BASE_URL}/client_images/${client.profile_picture}`
+            : `${BASE_URL}/client_images/default_profile_img.png`; // Fallback to default image
+
+        res.status(200).json({ ...client._doc, profile_picture: profilePicture });
+    } catch (e) {
+        res.status(500).json({ message: "Server error", error: e });
     }
-    catch (e) {
-        res.json(e)
-    }
-}
+};
+
 
 const deleteById = async (req, res) => {
     try {

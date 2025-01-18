@@ -2,6 +2,8 @@ const express = require("express")
 const connectDb = require("./config/db")
 const cors = require("cors");
 const app = express();
+const path = require("path");
+
 const ClientRouter = require("./route/client_route")
 const FreelancerRouter = require("./route/freelancer_route")
 const ReviewRouter = require("./route/review_route")
@@ -39,6 +41,12 @@ app.use("/api/billing-address", BillingAddressRouter);
 app.use("/api/payment", PaymentRouter);
 
 app.use("/api/auth", AuthRouter);
+
+// Define the absolute path to the client_images folder
+const clientImagesPath = path.join(__dirname, "client_images");
+
+// Serve static files from client_images
+app.use("/client_images", express.static(clientImagesPath));
 
 const port = 3000;
 app.listen(port, () => {
