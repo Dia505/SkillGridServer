@@ -44,9 +44,13 @@ app.use("/api/auth", AuthRouter);
 
 // Define the absolute path to the client_images folder
 const clientImagesPath = path.join(__dirname, "client_images");
+// Define the absolute path to the freelancer_images folder
+const freelancerImagesPath = path.join(__dirname, "freelancer_images");
 
 // Serve static files from client_images
 app.use("/client_images", express.static(clientImagesPath));
+// Serve static files from freelancer_images
+app.use("/freelancer_images", express.static(freelancerImagesPath));
 
 const port = 3000;
 app.listen(port, () => {

@@ -33,7 +33,7 @@ const save = async (req, res) => {
             email,
             password: hashedPassword,
             city,
-            profile_picture: req.file?.originalname || "default_profile.png",
+            profile_picture: req.file?.originalname || "default_profile_img.png",
             role_id: clientRole._id, // Explicitly set the role ID
         });
 
@@ -63,7 +63,7 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const client = await Client.findById(req.params.id);
-        
+
         if (!client) {
             return res.status(404).json({ message: "Client not found" });
         }
@@ -94,13 +94,21 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
+        // Check if password is in the request body
+        if (req.body.password) {
+            // Hash the password before saving it
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
+        }
+
         const client = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
         res.status(201).json(client);
     }
     catch (e) {
-        res.json(e)
+        res.status(500).json(e);
     }
-}
+};
 
 const updateProfilePicture = async (req, res) => {
     if (!req.file) {

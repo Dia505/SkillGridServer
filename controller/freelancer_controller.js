@@ -25,7 +25,7 @@ const save = async (req, res) => {
             return res.status(400).json({ message: "Freelancer role not found" });
         }
 
-        const profilePicture = req.files?.profile_picture?.[0]?.filename || "default_profile.png";
+        const profilePicture = req.files?.profile_picture?.[0]?.filename || "default_profile_img.png";
         const backgroundPicture = req.files?.background_picture?.[0]?.filename || "default_bg_img.jpg";
 
         const freelancer = new Freelancer({
@@ -72,7 +72,18 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const freelancer = await Freelancer.findById(req.params.id);
-        res.status(200).json(freelancer);
+        if (!freelancer) {
+            return res.status(404).json({ message: "Freelancer not found" });
+        }
+
+        const BASE_URL = "http://localhost:3000";
+
+        // Ensure profile_picture contains a full URL
+        const profilePicture = freelancer.profile_picture
+            ? `${BASE_URL}/freelancer_images/${freelancer.profile_picture}`
+            : `${BASE_URL}/freelancer_images/default_profile_img.png`; // Fallback to default image
+
+        res.status(200).json({ ...freelancer._doc, profile_picture: profilePicture });
     }
     catch (e) {
         res.json(e)
