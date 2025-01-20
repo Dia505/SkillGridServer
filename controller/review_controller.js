@@ -53,6 +53,17 @@ const findByFreelancerId = async (req, res) => {
     }
 }
 
+const findByRating = async (req, res) => {
+    try {
+        const {rating} = req.params;
+        const review = await Review.find({rating}).populate("freelancer_id");
+        res.status(200).json(review);
+    }
+    catch(e) {
+        res.join(e)
+    }
+}
+
 const deleteById = async (req, res) => {
     try {
         const review = await Review.findByIdAndDelete(req.params.id);
@@ -79,6 +90,7 @@ module.exports = {
     findById,
     findByClientId,
     findByFreelancerId,
+    findByRating,
     deleteById,
     update,
 }

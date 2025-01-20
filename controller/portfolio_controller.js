@@ -1,6 +1,7 @@
+const Freelancer_Service = require("../model/Freelancer_Service");
 const Portfolio = require("../model/Portfolio")
 
-const findAll = async (req,res) => {
+const findAll = async (req, res) => {
     try {
         const portfolio = await Portfolio.find()
             .populate({
@@ -19,19 +20,22 @@ const findAll = async (req,res) => {
 
 const save = async (req, res) => {
     try {
-        const {caption, freelancer_service_id} = req.body
+        const { freelancer_service_id } = req.body;
+        // Map to get file names from the uploaded files
+        const filePaths = req.files.map(file => file.originalname);
+
         const portfolio = new Portfolio({
-            caption,
             freelancer_service_id,
-            file_path: req.file.originalname
+            file_path: filePaths,  // Save array of file paths
         });
+
         await portfolio.save();
-        res.status(201).json(portfolio)
+        res.status(201).json(portfolio);
+    } catch (e) {
+        res.json(e);
     }
-    catch (e) {
-        res.json(e)
-    }
-}
+};
+
 
 const findById = async (req, res) => {
     try {
@@ -52,8 +56,8 @@ const findById = async (req, res) => {
 
 const findByFreelancerServiceId = async (req, res) => {
     try {
-        const {freelancer_service_id} = req.params;
-        const portfolio = await Portfolio.find({freelancer_service_id})
+        const { freelancer_service_id } = req.params;
+        const portfolio = await Portfolio.find({ freelancer_service_id })
             .populate({
                 path: "freelancer_service_id",
                 populate: [
@@ -61,12 +65,79 @@ const findByFreelancerServiceId = async (req, res) => {
                     { path: "service_id" }
                 ]
             });
-        res.status(200).json(portfolio);
+
+        const BASE_URL = "http://localhost:3000";
+
+        // Format file_path to full URL
+        const portfolioImages = portfolio.map(item => {
+            return {
+                _id: item._id,
+                freelancer_service_id: item.freelancer_service_id,
+                file_path: item.file_path.map(file => `${BASE_URL}/service_portfolio_images/${file}`),
+                upload_date: item.upload_date,
+            };
+        });
+
+        res.status(200).json(portfolioImages); // Send the response with full URLs for file_path
     }
     catch (e) {
-        res.json(e)
+        res.status(500).json({ error: e.message });
     }
 }
+
+const findByFreelancerId = async (req, res) => {
+    try {
+        // Log the params to ensure freelancerId is coming through
+        console.log("Request Params:", req.params);
+        console.log("Requested Freelancer ID:", req.params.freelancer_id);
+
+        // Step 1: Find freelancer_service(s) for the given freelancerId
+        const freelancerService = await Freelancer_Service.find({ "freelancer_id": req.params.freelancer_id });
+
+        // Log the result of the Freelancer_Service query
+        console.log("Freelancer Service Found:", freelancerService);
+
+        if (!freelancerService || freelancerService.length === 0) {
+            return res.status(404).json({ message: 'Freelancer service not found' });
+        }
+
+        // Step 2: Find portfolio associated with the freelancer_service_ids
+        const portfolio = await Portfolio.find({
+            freelancer_service_id: { $in: freelancerService.map(service => service._id) }
+        }).populate({
+            path: "freelancer_service_id",
+            populate: [
+                { path: "freelancer_id" },
+                { path: "service_id" }
+            ]
+        });
+
+        // Log the portfolio results
+        console.log("Portfolios Found:", portfolio);
+
+        if (portfolio.length === 0) {
+            return res.status(404).json({ message: 'No portfolio found for this freelancer' });
+        }
+
+        const BASE_URL = "http://localhost:3000";
+
+        // Format file_path to full URL
+        const portfolioImages = portfolio.map(item => {
+            return {
+                _id: item._id,
+                freelancer_service_id: item.freelancer_service_id._id,
+                file_path: item.file_path.map(file => `${BASE_URL}/service_portfolio_images/${file}`),
+                upload_date: item.upload_date,
+            };
+        });
+
+        res.status(200).json(portfolioImages); // Send the response with full URLs for file_path
+    } catch (error) {
+        console.error("Error retrieving portfolio:", error);
+        res.status(500).json({ message: 'Server error, unable to retrieve portfolio' });
+    }
+};
+
 
 const deleteById = async (req, res) => {
     try {
@@ -108,6 +179,7 @@ module.exports = {
     save,
     findById,
     findByFreelancerServiceId,
+    findByFreelancerId,
     deleteById,
     update
 }

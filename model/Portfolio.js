@@ -1,17 +1,10 @@
 const mongoose = require("mongoose")
 
 const portfolioSchema = new mongoose.Schema({
-    file_path: {
-        type: String,
-        required: true
-    },
+    file_path: [String],
     upload_date: {
         type: Date,
         default: Date.now
-    },
-    caption: {
-        type: String,
-        required: false
     },
     freelancer_service_id: {
         type: mongoose.Schema.Types.ObjectId,

@@ -102,6 +102,10 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
+        if (req.body.password) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
+        }
         const freelancer = await Freelancer.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(201).json(freelancer);
     }

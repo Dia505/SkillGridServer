@@ -42,15 +42,15 @@ app.use("/api/payment", PaymentRouter);
 
 app.use("/api/auth", AuthRouter);
 
-// Define the absolute path to the client_images folder
+// Define the absolute path to the image folder
 const clientImagesPath = path.join(__dirname, "client_images");
-// Define the absolute path to the freelancer_images folder
 const freelancerImagesPath = path.join(__dirname, "freelancer_images");
+const portfolioImagesPath = path.join(__dirname, "service_portfolio_images");
 
-// Serve static files from client_images
+// Serve static files from image folder
 app.use("/client_images", express.static(clientImagesPath));
-// Serve static files from freelancer_images
 app.use("/freelancer_images", express.static(freelancerImagesPath));
+app.use("/service_portfolio_images", express.static(portfolioImagesPath));
 
 const port = 3000;
 app.listen(port, () => {

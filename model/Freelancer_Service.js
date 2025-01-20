@@ -5,10 +5,6 @@ const freelancerServiceSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    description: {
-        type: String,
-        required: false
-    },
     service_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "service"
