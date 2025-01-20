@@ -24,7 +24,7 @@ const uploadFields = upload.fields([
 ]);
 router.get("/", authenticateToken, authorizeRole("admin"), findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
-router.get("/:id", authenticateToken, authorizeRole("admin"), findById);
+router.get("/:id", findById);
 router.delete("/:id", authenticateToken, authorizeRole("freelancer"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("freelancer"), update)
 router.put("/:id/profile-picture", authenticateToken, authorizeRole("freelancer"), upload.single("profile_picture"), updateProfilePicture);

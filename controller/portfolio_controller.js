@@ -87,15 +87,8 @@ const findByFreelancerServiceId = async (req, res) => {
 
 const findByFreelancerId = async (req, res) => {
     try {
-        // Log the params to ensure freelancerId is coming through
-        console.log("Request Params:", req.params);
-        console.log("Requested Freelancer ID:", req.params.freelancer_id);
-
         // Step 1: Find freelancer_service(s) for the given freelancerId
         const freelancerService = await Freelancer_Service.find({ "freelancer_id": req.params.freelancer_id });
-
-        // Log the result of the Freelancer_Service query
-        console.log("Freelancer Service Found:", freelancerService);
 
         if (!freelancerService || freelancerService.length === 0) {
             return res.status(404).json({ message: 'Freelancer service not found' });
@@ -111,9 +104,6 @@ const findByFreelancerId = async (req, res) => {
                 { path: "service_id" }
             ]
         });
-
-        // Log the portfolio results
-        console.log("Portfolios Found:", portfolio);
 
         if (portfolio.length === 0) {
             return res.status(404).json({ message: 'No portfolio found for this freelancer' });
