@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const Role = require("../model/Role");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "ead678ab98e529472a8ba3bb8940653229510e01a9078ef9b15320d385f9df02";
+const BASE_URL = "http://localhost:3000";
 
 const findAll = async (req, res) => {
     try {
@@ -68,15 +69,12 @@ const save = async (req, res) => {
     }
 }
 
-
 const findById = async (req, res) => {
     try {
         const freelancer = await Freelancer.findById(req.params.id);
         if (!freelancer) {
             return res.status(404).json({ message: "Freelancer not found" });
         }
-
-        const BASE_URL = "http://localhost:3000";
 
         // Ensure profile_picture contains a full URL
         const profilePicture = freelancer.profile_picture
@@ -90,6 +88,63 @@ const findById = async (req, res) => {
     }
 }
 
+const findByName = async (req, res) => {
+    try {
+        const fullName = req.params.fullName.replace(/%20/g, " ");
+
+        const freelancer = await Freelancer.findOne({
+            $expr: { $eq: [{ $concat: ["$first_name", " ", "$last_name"] }, fullName] }
+        });
+
+        if (!freelancer) {
+            return res.status(404).json({ message: "Freelancer not found" });
+        }
+
+        const profilePicture = freelancer.profile_picture
+            ? `${BASE_URL}/freelancer_images/${freelancer.profile_picture}`
+            : `${BASE_URL}/freelancer_images/default_profile_img.png`;
+
+        res.status(200).json({ ...freelancer._doc, profile_picture: profilePicture });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const findByProfession = async (req, res) => {
+    try {
+        const profession = decodeURIComponent(req.params.profession); // Handle spaces
+
+        const freelancers = await Freelancer.find({ profession: { $regex: new RegExp(profession, "i") } });
+
+        if (freelancers.length === 0) {
+            return res.status(404).json({ message: "No freelancers found in this profession" });
+        }
+
+        res.status(200).json(freelancers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const findByJobCategory = async (req, res) => {
+    try {
+        const jobCategory = decodeURIComponent(req.params.jobCategory).trim(); // Decode URL params & trim spaces
+
+        const freelancers = await Freelancer.find({
+            job_category: { $regex: new RegExp(`^${jobCategory}$`, "i") } // Case-insensitive exact match
+        });
+
+        if (freelancers.length === 0) {
+            return res.status(404).json({ message: "No freelancers found in this job category" });
+        }
+
+        res.status(200).json(freelancers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const deleteById = async (req, res) => {
     try {
         const freelancer = await Freelancer.findByIdAndDelete(req.params.id);
@@ -98,7 +153,7 @@ const deleteById = async (req, res) => {
     catch (e) {
         res.json(e)
     }
-}
+};
 
 const update = async (req, res) => {
     try {
@@ -112,7 +167,7 @@ const update = async (req, res) => {
     catch (e) {
         res.json(e)
     }
-}
+};
 
 const updateProfilePicture = async (req, res) => {
     if (!req.file) {
@@ -155,6 +210,9 @@ module.exports = {
     findAll,
     save,
     findById,
+    findByName,
+    findByProfession,
+    findByJobCategory,
     deleteById,
     update,
     updateProfilePicture,
