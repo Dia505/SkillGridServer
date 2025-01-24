@@ -1,5 +1,5 @@
 const express = require("express")
-const { findAll, save, findById, findByName, findByProfession, findByJobCategory, deleteById, update, updateProfilePicture, updateBgPicture } = require("../controller/freelancer_controller");
+const { findAll, save, findById, searchFreelancers, findByJobCategory, deleteById, update, updateProfilePicture, updateBgPicture } = require("../controller/freelancer_controller");
 const router = express.Router();
 const multer = require("multer");
 const { freelancerRegistrationValidation } = require('../validation/freelancer_validation');
@@ -25,8 +25,7 @@ const uploadFields = upload.fields([
 router.get("/", authenticateToken, authorizeRole("admin"), findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
 router.get("/:id", findById);
-router.get("/name/:fullName", findByName);
-router.get("/profession/:profession", findByProfession);
+router.get("/search/:searchQuery", searchFreelancers);
 router.get("/job-category/:jobCategory", findByJobCategory);
 router.delete("/:id", authenticateToken, authorizeRole("freelancer"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("freelancer"), update)

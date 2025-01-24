@@ -88,37 +88,30 @@ const findById = async (req, res) => {
     }
 }
 
-const findByName = async (req, res) => {
+const searchFreelancers = async (req, res) => {
     try {
-        const fullName = req.params.fullName.replace(/%20/g, " ");
+        const searchQuery = req.params.searchQuery.trim();
 
-        const freelancer = await Freelancer.findOne({
-            $expr: { $eq: [{ $concat: ["$first_name", " ", "$last_name"] }, fullName] }
+        // MongoDB regex search (case-insensitive)
+        const freelancers = await Freelancer.find({
+            $or: [
+                { first_name: { $regex: new RegExp(searchQuery, "i") } },  // Match first name
+                { last_name: { $regex: new RegExp(searchQuery, "i") } },   // Match last name
+                { profession: { $regex: new RegExp(searchQuery, "i") } },  // Match profession
+                { job_category: { $regex: new RegExp(searchQuery, "i") } }, // Match job category
+                { 
+                    $expr: {  // Combine first_name + last_name for full name search
+                        $regexMatch: { 
+                            input: { $concat: ["$first_name", " ", "$last_name"] }, 
+                            regex: new RegExp(searchQuery, "i") 
+                        } 
+                    } 
+                }
+            ]
         });
 
-        if (!freelancer) {
-            return res.status(404).json({ message: "Freelancer not found" });
-        }
-
-        const profilePicture = freelancer.profile_picture
-            ? `${BASE_URL}/freelancer_images/${freelancer.profile_picture}`
-            : `${BASE_URL}/freelancer_images/default_profile_img.png`;
-
-        res.status(200).json({ ...freelancer._doc, profile_picture: profilePicture });
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const findByProfession = async (req, res) => {
-    try {
-        const profession = decodeURIComponent(req.params.profession); // Handle spaces
-
-        const freelancers = await Freelancer.find({ profession: { $regex: new RegExp(profession, "i") } });
-
         if (freelancers.length === 0) {
-            return res.status(404).json({ message: "No freelancers found in this profession" });
+            return res.status(404).json({ message: "No freelancers found" });
         }
 
         res.status(200).json(freelancers);
@@ -210,8 +203,7 @@ module.exports = {
     findAll,
     save,
     findById,
-    findByName,
-    findByProfession,
+    searchFreelancers,
     findByJobCategory,
     deleteById,
     update,
