@@ -26,7 +26,6 @@ router.get("/", authenticateToken, authorizeRole("admin"), findAll);
 router.post("/", freelancerRegistrationValidation, uploadFields, save);
 router.get("/:id", findById);
 router.get("/search/:searchQuery", searchFreelancers);
-router.get("/job-category/:jobCategory", findByJobCategory);
 router.delete("/:id", authenticateToken, authorizeRole("freelancer"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("freelancer"), update)
 router.put("/:id/profile-picture", authenticateToken, authorizeRole("freelancer"), upload.single("profile_picture"), updateProfilePicture);

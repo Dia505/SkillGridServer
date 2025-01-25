@@ -120,24 +120,6 @@ const searchFreelancers = async (req, res) => {
     }
 };
 
-const findByJobCategory = async (req, res) => {
-    try {
-        const jobCategory = decodeURIComponent(req.params.jobCategory).trim(); // Decode URL params & trim spaces
-
-        const freelancers = await Freelancer.find({
-            job_category: { $regex: new RegExp(`^${jobCategory}$`, "i") } // Case-insensitive exact match
-        });
-
-        if (freelancers.length === 0) {
-            return res.status(404).json({ message: "No freelancers found in this job category" });
-        }
-
-        res.status(200).json(freelancers);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 const deleteById = async (req, res) => {
     try {
         const freelancer = await Freelancer.findByIdAndDelete(req.params.id);
@@ -204,7 +186,6 @@ module.exports = {
     save,
     findById,
     searchFreelancers,
-    findByJobCategory,
     deleteById,
     update,
     updateProfilePicture,
