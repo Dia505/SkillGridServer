@@ -9,9 +9,9 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    role_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
+    role : {
+        type: String,
+        default: "admin",
         required: true
     }
 });

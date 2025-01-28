@@ -20,12 +20,6 @@ const save = async (req, res) => {
         const { first_name, last_name, date_of_birth, mobile_no, email, password, address, city, bio, job_category, profession, skills, years_of_experience, available } = req.body
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const freelancerRole = await Role.findOne({ role_name: "freelancer" });
-
-        if (!freelancerRole) {
-            return res.status(400).json({ message: "Freelancer role not found" });
-        }
-
         const profilePicture = req.files?.profile_picture?.[0]?.filename || "default_profile_img.png";
         const backgroundPicture = req.files?.background_picture?.[0]?.filename || "default_bg_img.jpg";
 
@@ -45,13 +39,12 @@ const save = async (req, res) => {
             years_of_experience,
             available,
             profile_picture: profilePicture,
-            background_picture: backgroundPicture,
-            role_id: freelancerRole._id
+            background_picture: backgroundPicture
         });
         await freelancer.save();
 
         const token = jwt.sign(
-            { role: freelancerRole.role_name, userId: freelancer._id },
+            { role: freelancer.role, userId: freelancer._id },
             SECRET_KEY,
             { expiresIn: "1h" }
         );
@@ -99,13 +92,13 @@ const searchFreelancers = async (req, res) => {
                 { last_name: { $regex: new RegExp(searchQuery, "i") } },   // Match last name
                 { profession: { $regex: new RegExp(searchQuery, "i") } },  // Match profession
                 { job_category: { $regex: new RegExp(searchQuery, "i") } }, // Match job category
-                { 
+                {
                     $expr: {  // Combine first_name + last_name for full name search
-                        $regexMatch: { 
-                            input: { $concat: ["$first_name", " ", "$last_name"] }, 
-                            regex: new RegExp(searchQuery, "i") 
-                        } 
-                    } 
+                        $regexMatch: {
+                            input: { $concat: ["$first_name", " ", "$last_name"] },
+                            regex: new RegExp(searchQuery, "i")
+                        }
+                    }
                 }
             ]
         });

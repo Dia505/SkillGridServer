@@ -31,9 +31,9 @@ const clientSchema = new mongoose.Schema({
         default: "default_profile.png",
         required: false
     },
-    role_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
+    role : {
+        type: String,
+        default: "client",
         required: true
     }
 })

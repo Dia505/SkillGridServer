@@ -19,12 +19,6 @@ const save = async (req, res) => {
         const { first_name, last_name, mobile_no, email, password, city } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Find the client role
-        const clientRole = await Role.findOne({ role_name: "client" });
-        if (!clientRole) {
-            return res.status(400).json({ message: "Client role not found" });
-        }
-
         // Create the client
         const client = new Client({
             first_name,
@@ -33,15 +27,14 @@ const save = async (req, res) => {
             email,
             password: hashedPassword,
             city,
-            profile_picture: req.file?.originalname || "default_profile_img.png",
-            role_id: clientRole._id, // Explicitly set the role ID
+            profile_picture: req.file?.originalname || "default_profile_img.png"
         });
 
         await client.save();
 
         // Generate JWT token
         const token = jwt.sign(
-            { role: clientRole.role_name, userId: client._id },
+            { role: client.role, userId: client._id },
             SECRET_KEY,
             { expiresIn: "1h" }
         );

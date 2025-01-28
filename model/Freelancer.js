@@ -69,9 +69,9 @@ const freelancerSchema = new mongoose.Schema({
         required: true,
         default: true
     },
-    role_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
+    role : {
+        type: String,
+        default: "freelancer",
         required: true
     }
 })
