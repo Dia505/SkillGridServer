@@ -3,7 +3,6 @@ const connectDb = require("./config/db")
 const cors = require("cors");
 const app = express();
 const path = require("path");
-const multer = require('multer');
 
 const ClientRouter = require("./route/client_route")
 const FreelancerRouter = require("./route/freelancer_route")
@@ -52,35 +51,6 @@ const portfolioImagesPath = path.join(__dirname, "service_portfolio_images");
 app.use("/client_images", express.static(clientImagesPath));
 app.use("/freelancer_images", express.static(freelancerImagesPath));
 app.use("/service_portfolio_images", express.static(portfolioImagesPath));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, portfolioImagesPath); // Save to service_portfolio_images folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Filename is the current timestamp with the original file extension
-  }
-});
-
-const upload = multer({ storage: storage });
-
-app.post('/api/upload', upload.array('files'), (req, res) => {
-  try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).send('No files uploaded');
-    }
-
-    const filePaths = req.files.map(file => `/service_portfolio_images/${file.filename}`); // Generate the URL to access the uploaded files
-
-    res.status(200).json({
-      message: 'Files uploaded successfully',
-      filePaths: filePaths, // Send the URLs of the uploaded files to the frontend
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error uploading files');
-  }
-});
 
 const port = 3000;
 app.listen(port, () => {

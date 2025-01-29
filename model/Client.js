@@ -31,7 +31,7 @@ const clientSchema = new mongoose.Schema({
         default: "default_profile.png",
         required: false
     },
-    role : {
+    role: {
         type: String,
         default: "client",
         required: true

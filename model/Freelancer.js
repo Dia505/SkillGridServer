@@ -69,7 +69,7 @@ const freelancerSchema = new mongoose.Schema({
         required: true,
         default: true
     },
-    role : {
+    role: {
         type: String,
         default: "freelancer",
         required: true
