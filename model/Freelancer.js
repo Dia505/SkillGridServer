@@ -35,22 +35,27 @@ const freelancerSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
+        default: "",
         required: false
     },
     job_category: {
         type: String,
+        default: "",
         required: false
     },
     profession: {
         type: String,
+        default: "",
         required: false
     },
     skills: {
         type: String,
+        default: "",
         required: false
     },
     years_of_experience: {
         type: Number,
+        default: 0,
         required: false,
         min: 0
     },
