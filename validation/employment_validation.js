@@ -4,7 +4,7 @@ const employmentSchema = joi.object({
     company_name: joi.string().required(),
     job_title: joi.string().required(),
     start_date: joi.date().required(),
-    end_date: joi.date().required(),
+    end_date: joi.date(),
     description: joi.string(),
     freelancer_id: joi.string()
 })

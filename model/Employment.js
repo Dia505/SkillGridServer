@@ -15,7 +15,8 @@ const employmentSchema = new mongoose.Schema({
     },
     end_date: {
         type: Date,
-        required: true
+        required: false,
+        default: null
     },
     description: {
         type: String,
