@@ -21,6 +21,10 @@ const reviewSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "freelancer"
     },
+    appointment_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "appointment"
+    }
 })
 
 const Review = mongoose.model("review", reviewSchema)
