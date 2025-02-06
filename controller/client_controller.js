@@ -96,7 +96,7 @@ const update = async (req, res) => {
 
         const client = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        res.status(201).json(client);
+        res.status(200).json(client);
     }
     catch (e) {
         res.status(500).json(e);
