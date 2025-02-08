@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const { findAll, save, findById, deleteById, update, updateProfilePicture, uploadProfilePicture } = require("../controller/client_controller");
+const { findAll, save, findById, deleteById, update, updateProfilePicture } = require("../controller/client_controller");
 const clientValidation = require("../validation/client_validation")
 const { authenticateToken } = require("../security/auth")
 const { authorizeRole } = require("../security/auth");
@@ -22,6 +22,5 @@ router.get("/:id", authenticateToken, authorizeRole("client"), findById);
 router.delete("/:id", authenticateToken, authorizeRole("client"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("client"), update);
 router.put("/:id/profile-picture", upload.single("profile_picture"), updateProfilePicture);
-router.post("/uploadProfilePicture", upload.single("profile_picture"), uploadProfilePicture);
 
 module.exports = router;

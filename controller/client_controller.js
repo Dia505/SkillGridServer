@@ -74,7 +74,6 @@ const findById = async (req, res) => {
     }
 };
 
-
 const deleteById = async (req, res) => {
     try {
         const client = await Client.findByIdAndDelete(req.params.id);
@@ -121,16 +120,6 @@ const updateProfilePicture = async (req, res) => {
     res.status(200).json(client);
 };
 
-const uploadProfilePicture = async (req, res) => {
-    if (!req.file) {
-        return res.status(400).send({ message: "Please upload a file" });
-    }
-    res.status(200).json({
-        success: true,
-        data: req.file.filename,
-    });
-};
-
 module.exports = {
     findAll,
     save,
@@ -138,5 +127,4 @@ module.exports = {
     deleteById,
     update,
     updateProfilePicture,
-    uploadProfilePicture
 }
