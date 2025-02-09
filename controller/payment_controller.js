@@ -1,7 +1,7 @@
 const Payment = require("../model/Payment");
 const Appointment = require("../model/Appointment")
 
-const findAll = async (req,res) => {
+const findAll = async (req, res) => {
     try {
         const payment = await Payment.find()
             .populate({
@@ -39,16 +39,20 @@ const calculateAmount = async (appointmentId) => {
                 durationInHours = project_duration.value;
                 break;
             case 'day':
-                durationInHours = project_duration.value * 8;
+                //presuming the user works 4 hours a day
+                durationInHours = project_duration.value * 4;
                 break;
             case 'week':
-                durationInHours = project_duration.value * 6 * 8;
+                //presuming the user works 8 hours a week
+                durationInHours = project_duration.value * 8;
                 break;
             case 'month':
-                durationInHours = project_duration.value * 26 * 8;
+                //presuming the user works 16 hours a month
+                durationInHours = project_duration.value * 16;
                 break;
             case 'year':
-                durationInHours = project_duration.value * 313 * 8;
+                //presuming the user works 128 hours a year (8 months)
+                durationInHours = project_duration.value * 128;
                 break;
             default:
                 throw new Error("Invalid project duration unit");
@@ -115,8 +119,8 @@ const findById = async (req, res) => {
 
 const findByAppointmentId = async (req, res) => {
     try {
-        const {appointment_id} = req.params;
-        const payment = await Payment.find({appointment_id})
+        const { appointment_id } = req.params;
+        const payment = await Payment.find({ appointment_id })
             .populate({
                 path: "appointment_id",
                 populate: [
@@ -143,7 +147,7 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(201).json(payment);
     }
     catch (e) {

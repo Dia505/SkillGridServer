@@ -10,7 +10,7 @@ router.post("/", appointmentValidation, authenticateToken, authorizeRole("client
 router.get("/:id", authenticateToken, authorizeRole("admin"), findById);
 router.get("/freelancer-service/:freelancer_service_id", authenticateToken, authorizeRole("admin","freelancer"), findByFreelancerServiceId);
 router.get("/client/:client_id", authenticateToken, authorizeRole("admin","client"), findByClientId);
-router.get("/freelancer/:freelancer_id", findByFreelancerId);
+router.get("/freelancer/:freelancer_id", authenticateToken, findByFreelancerId);
 router.delete("/:id", authenticateToken, authorizeRole("client"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("client","freelancer"), update);
 
