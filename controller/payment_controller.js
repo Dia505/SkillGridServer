@@ -135,6 +135,31 @@ const findByAppointmentId = async (req, res) => {
     }
 }
 
+const findByFreelancerId = async (req, res) => {
+    try {
+        const freelancerId = req.params.freelancerId; 
+
+        // Fetch payments from the database where payment_status is true and freelancer_id matches
+        const payments = await Payment.find({
+            "payment_status": true,
+            "appointment_id.freelancer_service_id.freelancer_id": freelancerId
+        });
+
+        // Calculate total payments for the freelancer
+        const totalPayment = payments.reduce((total, payment) => total + payment.amount, 0);
+
+        res.json({
+            freelancerId,
+            totalPayment
+        });
+
+    } catch (error) {
+        console.error("Error calculating payments:", error);
+        res.status(500).send("Internal server error");
+    }
+};
+
+
 const deleteById = async (req, res) => {
     try {
         const payment = await Payment.findByIdAndDelete(req.params.id);
@@ -160,6 +185,7 @@ module.exports = {
     save,
     findById,
     findByAppointmentId,
+    findByFreelancerId,
     deleteById,
     update
 }

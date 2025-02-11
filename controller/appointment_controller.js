@@ -1,7 +1,7 @@
 const Appointment = require("../model/Appointment")
 const Freelancer_Service = require("../model/Freelancer_Service");
 
-const findAll = async (req,res) => {
+const findAll = async (req, res) => {
     try {
         const appointment = await Appointment.find()
             .populate({
@@ -20,14 +20,45 @@ const findAll = async (req,res) => {
 
 const save = async (req, res) => {
     try {
+        // Extract values from the request body
+        const { appointment_date, project_duration } = req.body;
+
+        // Calculate the project end date based on appointment_date and project_duration
+        let projectEndDate = new Date(appointment_date);
+
+        switch (project_duration.unit) {
+            case 'hour':
+                projectEndDate.setHours(projectEndDate.getHours() + project_duration.value);
+                break;
+            case 'day':
+                projectEndDate.setDate(projectEndDate.getDate() + project_duration.value);
+                break;
+            case 'week':
+                projectEndDate.setDate(projectEndDate.getDate() + project_duration.value * 7);
+                break;
+            case 'month':
+                projectEndDate.setMonth(projectEndDate.getMonth() + project_duration.value);
+                break;
+            case 'year':
+                projectEndDate.setFullYear(projectEndDate.getFullYear() + project_duration.value);
+                break;
+            default:
+                throw new Error('Invalid duration unit');
+        }
+
+        // Add project_end_date to the request body before saving
+        req.body.project_end_date = projectEndDate;
+
+        // Create and save the appointment
         const appointment = new Appointment(req.body);
         await appointment.save();
-        res.status(201).json(appointment)
+
+        // Return the created appointment
+        res.status(201).json(appointment);
+    } catch (e) {
+        res.status(400).json({ error: e.message });
     }
-    catch (e) {
-        res.json(e)
-    }
-}
+};
 
 const findById = async (req, res) => {
     try {
@@ -48,8 +79,8 @@ const findById = async (req, res) => {
 
 const findByFreelancerServiceId = async (req, res) => {
     try {
-        const {freelancer_service_id} = req.params;
-        const appointment = await Appointment.find({freelancer_service_id})
+        const { freelancer_service_id } = req.params;
+        const appointment = await Appointment.find({ freelancer_service_id })
             .populate({
                 path: "freelancer_service_id",
                 populate: [
@@ -66,8 +97,8 @@ const findByFreelancerServiceId = async (req, res) => {
 
 const findByClientId = async (req, res) => {
     try {
-        const {client_id} = req.params;
-        const appointment = await Appointment.find({client_id})
+        const { client_id } = req.params;
+        const appointment = await Appointment.find({ client_id })
             .populate({
                 path: "freelancer_service_id",
                 populate: [
@@ -121,13 +152,57 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const { appointment_date, project_duration } = req.body;
+
+        // Get the current appointment to preserve existing values
+        const existingAppointment = await Appointment.findById(req.params.id);
+
+        // Calculate the new project_end_date
+        let projectEndDate = null;
+
+        // If appointment_date is provided, use it, else use the existing appointment's date
+        if (appointment_date) {
+            projectEndDate = new Date(appointment_date);
+        } else {
+            projectEndDate = new Date(existingAppointment.appointment_date); // Fallback to existing appointment date
+        }
+
+        // If project_duration is provided or if we need to recalculate using existing project_duration
+        const duration = project_duration || existingAppointment.project_duration;
+
+        if (duration) {
+            switch (duration.unit) {
+                case 'hour':
+                    projectEndDate.setHours(projectEndDate.getHours() + duration.value);
+                    break;
+                case 'day':
+                    projectEndDate.setDate(projectEndDate.getDate() + duration.value);
+                    break;
+                case 'week':
+                    projectEndDate.setDate(projectEndDate.getDate() + duration.value * 7);
+                    break;
+                case 'month':
+                    projectEndDate.setMonth(projectEndDate.getMonth() + duration.value);
+                    break;
+                case 'year':
+                    projectEndDate.setFullYear(projectEndDate.getFullYear() + duration.value);
+                    break;
+                default:
+                    throw new Error('Invalid duration unit');
+            }
+        }
+
+        // Set the newly calculated project_end_date to the request body
+        req.body.project_end_date = projectEndDate;
+
+        // Proceed with the update
+        const appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(201).json(appointment);
+    } catch (e) {
+        res.status(400).json({ error: e.message });
     }
-    catch (e) {
-        res.json(e)
-    }
-}
+};
+
 
 module.exports = {
     findAll,

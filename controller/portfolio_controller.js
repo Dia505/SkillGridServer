@@ -97,17 +97,7 @@ const findByFreelancerId = async (req, res) => {
         // Step 2: Find portfolio associated with the freelancer_service_ids
         const portfolio = await Portfolio.find({
             freelancer_service_id: { $in: freelancerService.map(service => service._id) }
-        }).populate({
-            path: "freelancer_service_id",
-            populate: [
-                { path: "freelancer_id" },
-                { path: "service_id" }
-            ]
-        });
-
-        if (portfolio.length === 0) {
-            return res.status(404).json({ message: 'No portfolio found for this freelancer' });
-        }
+        }).populate('freelancer_service_id');
 
         const BASE_URL = "http://localhost:3000";
 

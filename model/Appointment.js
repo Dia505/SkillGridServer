@@ -21,6 +21,10 @@ const appointmentSchema = new mongoose.Schema({
             enum: ["hour", "day", "week", "month", "year"], // Restrict to valid units
         },
     },
+    project_end_date: {
+        type: Date,
+        required: false
+    },
     appointment_time: {
         type: String,
         required: false

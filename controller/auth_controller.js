@@ -39,7 +39,7 @@ const login = async (req, res) => {
         return res.status(403).send("Incorrect password");
     }
 
-    const token = jwt.sign({ email: cred.email, role: cred.role, userId: cred._id }, SECRET_KEY, { expiresIn: "1 hour" });
+    const token = jwt.sign({ email: cred.email, role: cred.role, userId: cred._id }, SECRET_KEY);
     res.json({
         token,
         role: cred.role,
