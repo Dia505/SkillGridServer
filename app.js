@@ -4,18 +4,22 @@ const cors = require("cors");
 const app = express();
 const path = require("path");
 
-const ClientRouter = require("./route/client_route")
-const FreelancerRouter = require("./route/freelancer_route")
-const ReviewRouter = require("./route/review_route")
-const EmploymentRouter = require("./route/employment_route")
-const EducationRouter = require("./route/education_route")
-const ServiceRouter = require("./route/service_route")
-const FreelancerServiceRouter = require("./route/freelancer_service_route")
-const PortfolioRouter = require("./route/portfolio_route")
-const AppointmentRouter = require("./route/appointment_route")
-const BillingAddressRouter = require("./route/billing_address_route")
-const PaymentRouter = require("./route/payment_route")
-const AuthRouter = require("./route/auth_route")
+const http = require("http"); // Required for WebSocket server
+const { Server } = require("socket.io");
+
+const ClientRouter = require("./route/client_route");
+const FreelancerRouter = require("./route/freelancer_route");
+const ReviewRouter = require("./route/review_route");
+const EmploymentRouter = require("./route/employment_route");
+const EducationRouter = require("./route/education_route");
+const ServiceRouter = require("./route/service_route");
+const FreelancerServiceRouter = require("./route/freelancer_service_route");
+const PortfolioRouter = require("./route/portfolio_route");
+const AppointmentRouter = require("./route/appointment_route");
+const BillingAddressRouter = require("./route/billing_address_route");
+const PaymentRouter = require("./route/payment_route");
+const AuthRouter = require("./route/auth_route");
+const NotificationRouter = require("./route/notification_route");
 
 connectDb();
 
@@ -25,8 +29,24 @@ app.use(cors({
   methods: "GET,POST,PUT,DELETE", // Allowed HTTP methods
   credentials: true,              // Allow cookies
 }));
-
 app.use(express.json());
+
+const server = http.createServer(app); // Create HTTP server
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // Frontend URL
+    methods: ["GET", "POST"],
+  },
+});
+
+// WebSocket Connection Handling
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});
 
 app.use("/api/client", ClientRouter);
 app.use("/api/freelancer", FreelancerRouter);
@@ -39,6 +59,7 @@ app.use("/api/portfolio", PortfolioRouter);
 app.use("/api/appointment", AppointmentRouter);
 app.use("/api/billing-address", BillingAddressRouter);
 app.use("/api/payment", PaymentRouter);
+app.use("/api/notification", NotificationRouter);
 
 app.use("/api/auth", AuthRouter);
 

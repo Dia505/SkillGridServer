@@ -1,5 +1,6 @@
 const Appointment = require("../model/Appointment")
 const Freelancer_Service = require("../model/Freelancer_Service");
+const Notification = require("../model/Notification");
 
 const findAll = async (req, res) => {
     try {
@@ -21,7 +22,7 @@ const findAll = async (req, res) => {
 const save = async (req, res) => {
     try {
         // Extract values from the request body
-        const { appointment_date, project_duration } = req.body;
+        const { appointment_date, project_duration, client_id, freelancer_service_id } = req.body;
 
         // Calculate the project end date based on appointment_date and project_duration
         let projectEndDate = new Date(appointment_date);
@@ -52,6 +53,24 @@ const save = async (req, res) => {
         // Create and save the appointment
         const appointment = new Appointment(req.body);
         await appointment.save();
+
+        const freelancerId = appointment.freelancer_service_id.freelancer_id._id;
+        const clientName = `${client_id.first_name} ${client_id.last_name}`;
+        const message = `You have a new appointment request from ${clientName}`;
+
+        const freelancerNotification = new Notification({
+            freelancer_id: freelancerId,
+            message,
+            appointment_id: appointment._id
+        });
+
+        await freelancerNotification.save();
+
+        // Emit real-time notification to client
+        req.app.get("io").to(freelancerId).emit("new_notification", {
+            message,
+            appointment_id: appointment._id,
+        });
 
         // Return the created appointment
         res.status(201).json(appointment);
@@ -203,6 +222,45 @@ const update = async (req, res) => {
     }
 };
 
+const acceptAppointment = async (req, res) => {
+    try {
+        const appointmentId = req.params.id;
+
+        const appointment = await Appointment.findById(appointmentId);
+
+        if (!appointment) {
+            return res.status(404).json({ error: 'Appointment not found' });
+        }
+
+        //Update the status to true i.e., the freelancer has accepted the offer
+        appointment.status = true;
+        await appointment.save();
+
+        const clientId = appointment.client_id._id
+        const freelancerName = appointment.freelancer_service_id.freelancer_id.first_name;
+        const message = `${freelancerName} has accepted your offer!`
+
+        const clientNotification = new Notification({
+            client_id: clientId,
+            message,
+            appointment_id: appointment._id
+        });
+
+        await clientNotification.save();
+
+        // Emit real-time notification to client
+        req.app.get("io").to(clientId).emit("new_notification", {
+            message,
+            appointment_id: appointment._id,
+        });
+
+        res.status(200).json();
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+}
 
 module.exports = {
     findAll,
@@ -212,5 +270,6 @@ module.exports = {
     findByClientId,
     findByFreelancerId,
     deleteById,
-    update
+    update,
+    acceptAppointment
 }

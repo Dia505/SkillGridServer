@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const {findAll, save, findById, findByFreelancerServiceId, findByClientId, findByFreelancerId, deleteById, update} = require("../controller/appointment_controller");
+const {findAll, save, findById, findByFreelancerServiceId, findByClientId, findByFreelancerId, deleteById, update, acceptAppointment} = require("../controller/appointment_controller");
 const appointmentValidation = require("../validation/appointment_validation");
 const {authenticateToken} = require("../security/auth");
 const {authorizeRole} = require("../security/auth");
@@ -13,5 +13,6 @@ router.get("/client/:client_id", authenticateToken, authorizeRole("admin","clien
 router.get("/freelancer/:freelancer_id", authenticateToken, findByFreelancerId);
 router.delete("/:id", authenticateToken, authorizeRole("client"), deleteById);
 router.put("/:id", authenticateToken, authorizeRole("client","freelancer"), update);
+router.put("/:id", authenticateToken, authorizeRole("freelancer"), acceptAppointment);
 
 module.exports = router;
