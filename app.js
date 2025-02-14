@@ -51,6 +51,10 @@ io.on("connection", (socket) => {
   });
 });
 
+server.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
+});
+
 app.use("/api/client", ClientRouter);
 app.use("/api/freelancer", FreelancerRouter);
 app.use("/api/review", ReviewRouter);
@@ -76,7 +80,7 @@ app.use("/client_images", express.static(clientImagesPath));
 app.use("/freelancer_images", express.static(freelancerImagesPath));
 app.use("/service_portfolio_images", express.static(portfolioImagesPath));
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`server running at http://localhost:${port}`)
-})
+// const port = 3000;
+// app.listen(port, () => {
+//   console.log(`server running at http://localhost:${port}`)
+// })

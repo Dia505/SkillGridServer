@@ -22,7 +22,12 @@ const getNotificationsByFreelancerId = async (req, res) => {
         const notifications = await Notification.find({
             freelancer_id,
             read: false
-        }).sort({ notification_date: -1 });
+        })
+        .sort({ notification_date: -1 })
+        .populate({
+            path: "appointment_id",
+            populate: {path: "client_id"}
+        });
 
         res.status(200).json(notifications);
     }

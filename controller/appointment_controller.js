@@ -243,8 +243,13 @@ const acceptAppointment = async (req, res) => {
         appointment.status = true;
         await appointment.save();
 
-        const clientId = appointment.client_id._id
-        const freelancerName = appointment.freelancer_service_id.freelancer_id.first_name;
+        const updatedAppointment = await Appointment.findById(appointment._id).populate({
+            path: "freelancer_service_id",
+            populate: { path: "freelancer_id" }
+        }).populate("client_id");
+
+        const clientId = updatedAppointment.client_id._id
+        const freelancerName = updatedAppointment.freelancer_service_id.freelancer_id.first_name;
         const message = `${freelancerName} has accepted your offer!`
 
         const clientNotification = new Notification({

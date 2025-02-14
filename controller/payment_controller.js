@@ -120,7 +120,7 @@ const findById = async (req, res) => {
 const findByAppointmentId = async (req, res) => {
     try {
         const { appointment_id } = req.params;
-        const payment = await Payment.find({ appointment_id })
+        const payment = await Payment.findOne({ appointment_id })
             .populate({
                 path: "appointment_id",
                 populate: [
