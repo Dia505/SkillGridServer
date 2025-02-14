@@ -39,6 +39,9 @@ const io = new Server(server, {
   },
 });
 
+// Store `io` in `app` for access in routes
+app.set("io", io);
+
 // WebSocket Connection Handling
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);

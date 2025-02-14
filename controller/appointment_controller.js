@@ -22,7 +22,7 @@ const findAll = async (req, res) => {
 const save = async (req, res) => {
     try {
         // Extract values from the request body
-        const { appointment_date, project_duration, client_id, freelancer_service_id } = req.body;
+        const { appointment_date, project_duration } = req.body;
 
         // Calculate the project end date based on appointment_date and project_duration
         let projectEndDate = new Date(appointment_date);
@@ -54,8 +54,15 @@ const save = async (req, res) => {
         const appointment = new Appointment(req.body);
         await appointment.save();
 
-        const freelancerId = appointment.freelancer_service_id.freelancer_id._id;
-        const clientName = `${client_id.first_name} ${client_id.last_name}`;
+        //For notification
+        const savedAppointment = await Appointment.findById(appointment._id).populate({
+            path: "freelancer_service_id",
+            populate: { path: "freelancer_id" }
+        }).populate("client_id");
+
+        const freelancerId = savedAppointment.freelancer_service_id?.freelancer_id?._id;
+        console.log("Freelancer ID:", freelancerId);
+        const clientName = `${savedAppointment.client_id.first_name} ${savedAppointment.client_id.last_name}`;
         const message = `You have a new appointment request from ${clientName}`;
 
         const freelancerNotification = new Notification({
