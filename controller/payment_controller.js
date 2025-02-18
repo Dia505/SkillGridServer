@@ -170,6 +170,48 @@ const deleteById = async (req, res) => {
     }
 }
 
+const deleteByAppointmentId = async (req, res) => {
+    try {
+        const { appointment_id } = req.params;
+
+        // First, delete the payment related to the appointment
+        const payment = await Payment.findOneAndDelete({ appointment_id });
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found" });
+        }
+
+        // Then, delete the appointment itself
+        const appointment = await Appointment.findByIdAndDelete(appointment_id);
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+
+        //For notification
+        // const freelancerId = appointment.freelancer_service_id?.freelancer_id?._id;
+        // const clientName = `${appointment.client_id.first_name} ${appointment.client_id.last_name}`;
+        // const projectName = appointment.appointment_purpose;
+        // const message = `${clientName} has deleted the project '${projectName}'`;
+
+        // const projectDeletedNotification = new Notification({
+        //     freelancer_id: freelancerId,
+        //     message,
+        //     appointment_id: appointment._id
+        // });
+
+        // await projectDeletedNotification.save();
+
+        // // Emit real-time notification to client
+        // req.app.get("io").to(freelancerId).emit("new_notification", {
+        //     message,
+        //     appointment_id: appointment._id,
+        // });
+
+        res.status(200).json({ message: "Appointment and related payment deleted successfully" });
+    } catch (e) {
+        res.status(500).json({ message: "Error deleting appointment and payment", error: e.message });
+    }
+}
+
 const update = async (req, res) => {
     try {
         const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -187,5 +229,6 @@ module.exports = {
     findByAppointmentId,
     findByFreelancerId,
     deleteById,
+    deleteByAppointmentId,
     update
 }
