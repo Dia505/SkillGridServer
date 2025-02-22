@@ -129,14 +129,31 @@ const deleteById = async (req, res) => {
     }
 }
 
+const deleteByFreelancerServiceId = async (req, res) => {
+    try {
+        const { freelancer_service_id } = req.params;
+
+        const deletedPortfolio = await Portfolio.findOneAndDelete({ freelancer_service_id });
+
+        if (!deletedPortfolio) {
+            return res.status(404).json({ message: 'Portfolio not found' });
+        }
+
+        res.status(200).json({ message: 'Portfolio deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting portfolio' });
+    }
+}
+
 const update = async (req, res) => {
     try {
         // Prepare the update data object
         const updatedData = { ...req.body };
 
-        // Check if a new file has been uploaded and update the file_path
-        if (req.file) {
-            updatedData.file_path = req.file.filename;
+        // Check if new files have been uploaded and update the file_path
+        if (req.files && req.files.length > 0) {
+            updatedData.file_path = req.files.map(file => file.filename); // Store an array of filenames
         }
 
         // Update the portfolio with the new data
@@ -154,6 +171,7 @@ const update = async (req, res) => {
     }
 };
 
+
 module.exports = {
     findAll,
     save,
@@ -161,5 +179,6 @@ module.exports = {
     findByFreelancerServiceId,
     findByFreelancerId,
     deleteById,
+    deleteByFreelancerServiceId,
     update
 }
