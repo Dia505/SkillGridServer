@@ -186,26 +186,6 @@ const deleteByAppointmentId = async (req, res) => {
             return res.status(404).json({ message: "Appointment not found" });
         }
 
-        //For notification
-        // const freelancerId = appointment.freelancer_service_id?.freelancer_id?._id;
-        // const clientName = `${appointment.client_id.first_name} ${appointment.client_id.last_name}`;
-        // const projectName = appointment.appointment_purpose;
-        // const message = `${clientName} has deleted the project '${projectName}'`;
-
-        // const projectDeletedNotification = new Notification({
-        //     freelancer_id: freelancerId,
-        //     message,
-        //     appointment_id: appointment._id
-        // });
-
-        // await projectDeletedNotification.save();
-
-        // // Emit real-time notification to client
-        // req.app.get("io").to(freelancerId).emit("new_notification", {
-        //     message,
-        //     appointment_id: appointment._id,
-        // });
-
         res.status(200).json({ message: "Appointment and related payment deleted successfully" });
     } catch (e) {
         res.status(500).json({ message: "Error deleting appointment and payment", error: e.message });
