@@ -5,7 +5,7 @@ const appointmentValidation = require("../validation/appointment_validation");
 const { authenticateToken } = require("../security/auth");
 const { authorizeRole } = require("../security/auth");
 
-router.get("/", authenticateToken, authorizeRole("admin"), findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", appointmentValidation, authenticateToken, authorizeRole("client"), save);
 router.get("/:id", authenticateToken, findById);
 router.get("/freelancer-service/:freelancer_service_id", authenticateToken, authorizeRole("admin", "freelancer"), findByFreelancerServiceId);

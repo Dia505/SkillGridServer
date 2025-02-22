@@ -5,7 +5,8 @@ const reviewSchema = joi.object({
     review: joi.string().required(),
     review_date:joi.string(),
     client_id:joi.string(),
-    freelancer_id:joi.string()
+    freelancer_id:joi.string(),
+    appointment_id:joi.string()
 })
 
 function reviewValidation(req, res, next) {

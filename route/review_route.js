@@ -5,7 +5,7 @@ const reviewValidation = require("../validation/review_validation");
 const { authenticateToken } = require("../security/auth");
 const { authorizeRole } = require("../security/auth");
 
-router.get("/", authenticateToken, authorizeRole("admin"), findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", reviewValidation, authenticateToken, authorizeRole("client"), save);
 router.get("/:id", authenticateToken, authorizeRole("admin"), findById);
 router.get("/client/:client_id", authenticateToken, authorizeRole("admin", "client"), findByClientId);
