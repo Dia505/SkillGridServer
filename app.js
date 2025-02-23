@@ -20,6 +20,7 @@ const BillingAddressRouter = require("./route/billing_address_route");
 const PaymentRouter = require("./route/payment_route");
 const AuthRouter = require("./route/auth_route");
 const NotificationRouter = require("./route/notification_route");
+const OtpResetPasswordRouter = require("./route/otp_reset_password_route");
 
 connectDb();
 
@@ -67,6 +68,7 @@ app.use("/api/appointment", AppointmentRouter);
 app.use("/api/billing-address", BillingAddressRouter);
 app.use("/api/payment", PaymentRouter);
 app.use("/api/notification", NotificationRouter);
+app.use("/api/reset", OtpResetPasswordRouter);
 
 app.use("/api/auth", AuthRouter);
 

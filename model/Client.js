@@ -35,7 +35,15 @@ const clientSchema = new mongoose.Schema({
         type: String,
         default: "client",
         required: true
-    }
+    },
+    otp: { 
+        type: String, 
+        required: false 
+    },
+    otpExpiresAt: { 
+        type: Date, 
+        required: false 
+    },
 })
 
 const Client = mongoose.model("client", clientSchema)

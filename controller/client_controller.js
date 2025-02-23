@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const Role = require("../model/Role");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "ead678ab98e529472a8ba3bb8940653229510e01a9078ef9b15320d385f9df02";
+const nodemailer = require("nodemailer");
 
 const findAll = async (req, res) => {
     try {
@@ -120,6 +121,104 @@ const updateProfilePicture = async (req, res) => {
     res.status(200).json(client);
 };
 
+const sendOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const client = await Client.findOne({ email });
+
+        if (!client) return res.status(404).json({ message: "Client not found" });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
+        client.otp = otp;
+        client.otpExpiresAt = otpExpiresAt;
+        await client.save();
+
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            protocol: "smtp",
+            auth: {
+                user: "skillgrid2025@gmail.com",
+                pass: "atufivxdidghafoh"
+            }
+        })
+
+        await transporter.sendMail({
+            from: '"SkillGrid Support" <skillgrid2025@gmail.com>',
+            to: client.email,
+            subject: "Reset Your Password - OTP Verification",
+            html: `
+                <h1>Reset your password</h1>
+                <p>Use the following OTP to reset your password:</p>
+                <h2>${otp}</h2>
+                <p>If you did not request this, please ignore this email.</p>
+            `
+        });
+
+        res.status(200).json({ message: "OTP sent successfully" });
+    }
+    catch (error) {
+        console.error("Error sending OTP:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        const client = await Client.findOne({ email });
+
+        if (!client) {
+            return res.status(404).json({ message: "Client not found" });
+        }
+
+        // Check if OTP matches and if it has expired
+        if (client.otp !== otp) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        if (client.otpExpiresAt < Date.now()) {
+            return res.status(400).json({ message: "OTP has expired" });
+        }
+
+        res.status(200).json({ message: "OTP verified successfully" });
+    } catch (error) {
+        console.error("Error verifying OTP:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    try {
+        console.log("Received request body:", req.body);
+        const { email, newPassword } = req.body;
+
+        const client = await Client.findOne({ email });
+
+        if (!client) {
+            return res.status(404).json({ message: "Client not found" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await Client.findOneAndUpdate(
+            { email },
+            { password: hashedPassword, otp: null, otpExpiresAt: null },
+            { new: true }
+        );
+
+        res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     findAll,
     save,
@@ -127,4 +226,7 @@ module.exports = {
     deleteById,
     update,
     updateProfilePicture,
+    sendOtp,
+    verifyOtp,
+    resetPassword
 }
