@@ -196,12 +196,16 @@ const verifyOtp = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         console.log("Received request body:", req.body);
-        const { email, newPassword } = req.body;
+        const { email, newPassword, otp } = req.body;
 
         const client = await Client.findOne({ email });
 
         if (!client) {
             return res.status(404).json({ message: "Client not found" });
+        }
+
+        if (client.otp !== otp || client.otpExpiresAt < Date.now()) {
+            return res.status(400).json({ message: "Invalid or expired OTP" });
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
