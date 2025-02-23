@@ -45,7 +45,16 @@ const findByClientId = async (req, res) => {
 const findByFreelancerId = async (req, res) => {
     try {
         const { freelancer_id } = req.params;
-        const review = await Review.find({ freelancer_id }).populate(["freelancer_id", "appointment_id"]);
+        const review = await Review.find({ freelancer_id })
+            .populate("freelancer_id")
+            .populate({
+                path: "appointment_id",
+                populate: [
+                    { path: "client_id" },
+                    { path: "freelancer_service_id" }
+                ]
+            })
+            .populate("client_id");
         res.status(200).json(review);
     }
     catch (e) {
