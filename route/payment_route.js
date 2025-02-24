@@ -7,7 +7,7 @@ const { authorizeRole } = require("../security/auth");
 
 router.get("/", authenticateToken, authorizeRole("admin"), findAll);
 router.post("/", paymentValidation, save);
-router.get("/:id", authenticateToken, authorizeRole("admin"), findById);
+router.get("/:id", authenticateToken, findById);
 router.get("/appointment/:appointment_id", authenticateToken, findByAppointmentId);
 router.get("/freelancer/:freelancer_id", authenticateToken, authorizeRole("freelancer"), findByFreelancerId);
 router.delete("/:id", authenticateToken, authorizeRole("client", "freelancer"), deleteById);

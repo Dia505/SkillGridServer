@@ -31,6 +31,22 @@ const findById = async (req, res) => {
     }
 }
 
+const findByAppointmentId = async (req, res) => {
+    try {
+        const { appointment_id } = req.params;
+        const review = await Review.findOne({ appointment_id });
+
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found' });
+        }
+
+        res.status(200).json(review);
+    }
+    catch (e) {
+        res.json(e)
+    }
+}
+
 const findByClientId = async (req, res) => {
     try {
         const { client_id } = req.params;
@@ -97,6 +113,7 @@ module.exports = {
     findAll,
     save,
     findById,
+    findByAppointmentId,
     findByClientId,
     findByFreelancerId,
     findByRating,
