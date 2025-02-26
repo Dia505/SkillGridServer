@@ -195,7 +195,6 @@ const verifyOtp = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        console.log("Received request body:", req.body);
         const { email, newPassword, otp } = req.body;
 
         const client = await Client.findOne({ email });

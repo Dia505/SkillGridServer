@@ -24,6 +24,8 @@ const OtpResetPasswordRouter = require("./route/otp_reset_password_route");
 
 connectDb();
 
+// origin: "http://192.168.18.11:5173",
+
 //CORS middleware applied before route defining
 app.use(cors({
   origin: "http://localhost:5173",
@@ -82,7 +84,4 @@ app.use("/client_images", express.static(clientImagesPath));
 app.use("/freelancer_images", express.static(freelancerImagesPath));
 app.use("/service_portfolio_images", express.static(portfolioImagesPath));
 
-// const port = 3000;
-// app.listen(port, () => {
-//   console.log(`server running at http://localhost:${port}`)
-// })
+module.exports = app; 

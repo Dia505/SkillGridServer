@@ -1,6 +1,6 @@
 const BillingAddress = require("../model/Billing_Address");
 
-const findAll = async (req,res) => {
+const findAll = async (req, res) => {
     try {
         const billingAddress = await BillingAddress.find();
         res.status(200).json(billingAddress);
@@ -43,7 +43,7 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const billingAddress = await BillingAddress.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const billingAddress = await BillingAddress.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(201).json(billingAddress);
     }
     catch (e) {

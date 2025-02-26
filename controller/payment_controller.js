@@ -70,6 +70,7 @@ const calculateAmount = async (appointmentId) => {
 };
 
 const save = async (req, res) => {
+    console.log(req.body);
     try {
         // Calculate the amount based on the appointment ID (assuming appointment_id is provided in the body)
         const appointmentId = req.body.appointment_id;
@@ -137,7 +138,7 @@ const findByAppointmentId = async (req, res) => {
 
 const findByFreelancerId = async (req, res) => {
     try {
-        const freelancerId = req.params.freelancerId; 
+        const freelancerId = req.params.freelancerId;
 
         // Fetch payments from the database where payment_status is true and freelancer_id matches
         const payments = await Payment.find({

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const Role = require("../model/Role")
 
 const clientSchema = new mongoose.Schema({
     first_name: {
