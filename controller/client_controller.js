@@ -87,18 +87,20 @@ const deleteById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        // Check if password is in the request body
-        if (req.body.password) {
-            // Hash the password before saving it
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            req.body.password = hashedPassword;
+        const updateData = { ...req.body };
+
+        // If the request contains a password, hash it before updating
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        } else {
+            // Prevent MongoDB from setting password to undefined
+            delete updateData.password;
         }
 
-        const client = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const client = await Client.findByIdAndUpdate(req.params.id, updateData, { new: true });
 
         res.status(200).json(client);
-    }
-    catch (e) {
+    } catch (e) {
         res.status(500).json(e);
     }
 };
@@ -108,18 +110,23 @@ const updateProfilePicture = async (req, res) => {
         return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const client = await Client.findByIdAndUpdate(
-        req.params.id,
-        { profile_picture: req.file.filename },
-        { new: true }
-    );
+    try {
+        // Retrieve the current client data to preserve the password
+        const client = await Client.findById(req.params.id);
+        if (!client) {
+            return res.status(404).json({ message: "Client not found" });
+        }
 
-    if (!client) {
-        return res.status(404).json({ message: "Client not found" });
+        // Update only the profile picture, keeping the existing password
+        client.profile_picture = req.file.filename;
+        await client.save();
+
+        res.status(200).json(client);
+    } catch (e) {
+        res.status(500).json(e);
     }
-
-    res.status(200).json(client);
 };
+
 
 const sendOtp = async (req, res) => {
     try {
