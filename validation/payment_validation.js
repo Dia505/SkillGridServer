@@ -11,7 +11,7 @@ const paymentSchema = joi.object({
 
 function paymentValidation(req, res, next) {
     const { error } = paymentSchema.validate(req.body);
-    if(error) {
+    if (error) {
         return res.json(error)
     }
     next()

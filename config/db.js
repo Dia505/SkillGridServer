@@ -1,13 +1,18 @@
-const mongoose = require("mongoose");
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
+const mongoose = require('mongoose');
 
-const connectDb = async () => {
+const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb://localhost:27017/db_skillgrid");
-        console.log("MongoDb connected")
-    }
-    catch (e) {
-        console.log("MongoDb not connected")
-    }
-}
+        const connString = process.env.NODE_ENV === 'test'
+            ? process.env.MONGO_URI_TEST
+            : process.env.MONGO_URI;
 
-module.exports = connectDb;
+        await mongoose.connect(connString);
+        console.log(`MongoDB Connected: ${mongoose.connection.host}`);
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        process.exit(1);
+    }
+};
+
+module.exports = connectDB;

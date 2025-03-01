@@ -84,4 +84,4 @@ app.use("/client_images", express.static(clientImagesPath));
 app.use("/freelancer_images", express.static(freelancerImagesPath));
 app.use("/service_portfolio_images", express.static(portfolioImagesPath));
 
-module.exports = app; 
+module.exports = {app}; 

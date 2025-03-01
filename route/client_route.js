@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-router.get("/", authenticateToken, authorizeRole("admin"), findAll);
+router.get("/", authenticateToken, findAll);
 router.post("/", clientValidation, upload.single("profile_picture"), save);
 router.get("/:id", authenticateToken, authorizeRole("client"), findById);
 router.delete("/:id", authenticateToken, authorizeRole("client"), deleteById);
