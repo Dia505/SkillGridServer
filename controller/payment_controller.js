@@ -138,7 +138,7 @@ const findByAppointmentId = async (req, res) => {
 
 const findByFreelancerId = async (req, res) => {
     try {
-        const freelancerId = req.params.freelancerId;
+        const freelancerId = req.params.freelancer_id;
 
         // Fetch payments from the database where payment_status is true and freelancer_id matches
         const payments = await Payment.find({

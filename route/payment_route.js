@@ -5,7 +5,7 @@ const paymentValidation = require("../validation/payment_validation");
 const { authenticateToken } = require("../security/auth");
 const { authorizeRole } = require("../security/auth");
 
-router.get("/", authenticateToken, authorizeRole("admin"), findAll);
+router.get("/", findAll);
 router.post("/", paymentValidation, save);
 router.get("/:id", authenticateToken, findById);
 router.get("/appointment/:appointment_id", authenticateToken, findByAppointmentId);
