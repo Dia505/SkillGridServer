@@ -2,22 +2,23 @@ const Notification = require("../model/Notification");
 
 const getNotificationsByClientId = async (req, res) => {
     try {
-        const {client_id} = req.params;
+        const { client_id } = req.params;
         const notifications = await Notification.find({
             client_id,
             read: false
         })
-        .sort({ notification_date: -1 })
-        .populate({
-            path: "appointment_id",
-            populate: [
-                { path: "client_id" },
-                { 
-                    path: "freelancer_service_id",
-                    populate: { path: "freelancer_id" } 
-                }
-            ]
-        });
+            .sort({ notification_date: -1 })
+            .populate("client_id")
+            .populate({
+                path: "appointment_id",
+                populate: [
+                    { path: "client_id" },
+                    {
+                        path: "freelancer_service_id",
+                        populate: { path: "freelancer_id" }
+                    }
+                ]
+            });
 
         res.status(200).json(notifications);
     }
@@ -29,16 +30,16 @@ const getNotificationsByClientId = async (req, res) => {
 
 const getNotificationsByFreelancerId = async (req, res) => {
     try {
-        const {freelancer_id} = req.params;
+        const { freelancer_id } = req.params;
         const notifications = await Notification.find({
             freelancer_id,
             read: false
         })
-        .sort({ notification_date: -1 })
-        .populate({
-            path: "appointment_id",
-            populate: {path: "client_id"}
-        });
+            .sort({ notification_date: -1 })
+            .populate({
+                path: "appointment_id",
+                populate: { path: "client_id" }
+            });
 
         res.status(200).json(notifications);
     }
